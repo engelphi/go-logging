@@ -1,9 +1,10 @@
 package logging
 
 import (
-	"strings"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 //--------------------------------------------------------------------------------------------------
@@ -11,9 +12,7 @@ func TestFormatLogString(t *testing.T) {
 	date := time.Date(2018, time.June, 18, 12, 0, 0, 0, time.UTC)
 	expected := "[2018-06-18 12:00:00 +0000 UTC][INFO][TestFormatLogString] Test\n"
 	actual := formatLogString(date.String(), INFO, "TestFormatLogString", "Test")
-	if expected != actual {
-		t.Errorf("Unexepected log string:\nExpected: %s\nActual: %s\n", expected, actual)
-	}
+	assert.Equal(t, expected, actual)
 }
 
 func TestGetCallerContext(t *testing.T) {
@@ -24,15 +23,10 @@ func TestGetCallerContext(t *testing.T) {
 		return t()
 	}
 
-	expected := "logging_test.go#28"
+	expected := "logging_test.go#27"
 	actual, err := getCallerContext()
-	if err != nil {
-		t.Errorf("getCallerContext failed: %v\n", err)
-	}
-
-	if !strings.Contains(actual, expected) {
-		t.Errorf("getCallerContext failed to retrieve correct caller:\nExpected: %s, Actual: %s\n", expected, actual)
-	}
+	assert.Nil(t, err)
+	assert.Contains(t, actual, expected)
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -50,9 +44,9 @@ func TestInfo(t *testing.T) {
 
 	Info("Testmessage")
 	message := backend.LogHistory[0]
-	if !(strings.Contains(message, "Testmessage") && strings.Contains(message, "[INFO]") && strings.Contains(message, "logging_test.go#51")) {
-		t.Errorf("Did not found expected log message")
-	}
+	assert.Contains(t, message, "Testmessage")
+	assert.Contains(t, message, "[INFO]")
+	assert.Contains(t, message, "logging_test.go#45")
 }
 
 func TestDebug(t *testing.T) {
@@ -62,9 +56,9 @@ func TestDebug(t *testing.T) {
 
 	Debug("Testmessage")
 	message := backend.LogHistory[0]
-	if !(strings.Contains(message, "Testmessage") && strings.Contains(message, "[DEBUG]") && strings.Contains(message, "logging_test.go#63")) {
-		t.Errorf("Did not found expected log message")
-	}
+	assert.Contains(t, message, "Testmessage")
+	assert.Contains(t, message, "[DEBUG]")
+	assert.Contains(t, message, "logging_test.go#57")
 }
 
 func TestWarn(t *testing.T) {
@@ -73,9 +67,9 @@ func TestWarn(t *testing.T) {
 
 	Warn("Testmessage")
 	message := backend.LogHistory[0]
-	if !(strings.Contains(message, "Testmessage") && strings.Contains(message, "[WARN]") && strings.Contains(message, "logging_test.go#74")) {
-		t.Errorf("Did not found expected log message")
-	}
+	assert.Contains(t, message, "Testmessage")
+	assert.Contains(t, message, "[WARN]")
+	assert.Contains(t, message, "logging_test.go#68")
 }
 
 func TestError(t *testing.T) {
@@ -84,9 +78,9 @@ func TestError(t *testing.T) {
 
 	Error("Testmessage")
 	message := backend.LogHistory[0]
-	if !(strings.Contains(message, "Testmessage") && strings.Contains(message, "[ERROR]") && strings.Contains(message, "logging_test.go#85")) {
-		t.Errorf("Did not found expected log message")
-	}
+	assert.Contains(t, message, "Testmessage")
+	assert.Contains(t, message, "[ERROR]")
+	assert.Contains(t, message, "logging_test.go#79")
 }
 
 func TestFatal(t *testing.T) {
@@ -106,11 +100,8 @@ func TestFatal(t *testing.T) {
 
 	Fatal("Testmessage")
 	message := backend.LogHistory[0]
-	if !(strings.Contains(message, "Testmessage") && strings.Contains(message, "[FATAL]") && strings.Contains(message, "logging_test.go#107")) {
-		t.Errorf("Did not found expected log message")
-	}
-
-	if got != expectedExitCode {
-		t.Errorf("Unexpected error code")
-	}
+	assert.Contains(t, message, "Testmessage")
+	assert.Contains(t, message, "[FATAL]")
+	assert.Contains(t, message, "logging_test.go#101")
+	assert.Equal(t, expectedExitCode, got)
 }
