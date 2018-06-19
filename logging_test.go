@@ -30,54 +30,90 @@ func TestGetCallerContext(t *testing.T) {
 }
 
 //--------------------------------------------------------------------------------------------------
-func TestInfo(t *testing.T) {
-	backend := testingLogWriter{}
-	SetBackend(&backend)
-
-	Info("Testmessage")
-	message := backend.LogHistory[0]
-	assert.Contains(t, message, "Testmessage")
-	assert.Contains(t, message, "[INFO]")
-	assert.Contains(t, message, "logging_test.go#37")
-}
-
 func TestDebug(t *testing.T) {
-	backend := testingLogWriter{}
-	SetBackend(&backend)
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
 	SetLogLevel(DEBUG)
 
 	Debug("Testmessage")
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[DEBUG]")
-	assert.Contains(t, message, "logging_test.go#49")
+	assert.Contains(t, message, "logging_test.go#38")
+}
+
+func TestDebugDeactivated(t *testing.T) {
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
+	SetLogLevel(INFO)
+
+	Debug("Testmessage")
+	assert.Equal(t, 0, len(backend.LogHistory))
+}
+
+func TestInfo(t *testing.T) {
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
+
+	Info("Testmessage")
+	message := backend.LogHistory[0]
+	assert.Contains(t, message, "Testmessage")
+	assert.Contains(t, message, "[INFO]")
+	assert.Contains(t, message, "logging_test.go#58")
+}
+
+func TestInfoDeactivated(t *testing.T) {
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
+	SetLogLevel(WARN)
+
+	Info("Testmessage")
+	assert.Equal(t, 0, len(backend.LogHistory))
 }
 
 func TestWarn(t *testing.T) {
-	backend := testingLogWriter{}
-	SetBackend(&backend)
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
 
 	Warn("Testmessage")
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[WARN]")
-	assert.Contains(t, message, "logging_test.go#60")
+	assert.Contains(t, message, "logging_test.go#78")
+}
+
+func TestWarnDeactivated(t *testing.T) {
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
+	SetLogLevel(ERROR)
+
+	Warn("Testmessage")
+	assert.Equal(t, 0, len(backend.LogHistory))
 }
 
 func TestError(t *testing.T) {
-	backend := testingLogWriter{}
-	SetBackend(&backend)
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
 
 	Error("Testmessage")
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[ERROR]")
-	assert.Contains(t, message, "logging_test.go#71")
+	assert.Contains(t, message, "logging_test.go#98")
+}
+
+func TestErrorDeactivated(t *testing.T) {
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
+	SetLogLevel(FATAL)
+
+	Error("Testmessage")
+	assert.Equal(t, 0, len(backend.LogHistory))
 }
 
 func TestFatal(t *testing.T) {
-	backend := testingLogWriter{}
-	SetBackend(&backend)
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
 
 	oldOsExit := exit
 	defer func() { exit = oldOsExit }()
@@ -94,6 +130,6 @@ func TestFatal(t *testing.T) {
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[FATAL]")
-	assert.Contains(t, message, "logging_test.go#93")
+	assert.Contains(t, message, "logging_test.go#129")
 	assert.Equal(t, expectedExitCode, got)
 }

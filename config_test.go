@@ -7,8 +7,8 @@ import (
 )
 
 func TestSetBackend(t *testing.T) {
-	backend := testingLogWriter{}
-	SetBackend(&backend)
+	backend := testingLogBackend{}
+	SetLogBackend(&backend)
 	assert.Equal(t, &backend, cfg.backend)
 }
 

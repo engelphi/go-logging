@@ -14,7 +14,7 @@ var exit = os.Exit
 var cfg config
 
 func init() {
-	cfg.backend = ConsoleWriter{}
+	cfg.backend = NewConsoleLogWriter()
 	cfg.level = INFO
 }
 
@@ -34,10 +34,6 @@ func getCallerContext() (string, error) {
 }
 
 func logBase(level LogLevel, msg string) {
-	if level < cfg.level {
-		return
-	}
-
 	t := time.Now()
 	caller, err := getCallerContext()
 	if err != nil {
@@ -50,21 +46,33 @@ func logBase(level LogLevel, msg string) {
 
 // Debug logs debug messages
 func Debug(msg string, v ...interface{}) {
+	if cfg.level > DEBUG {
+		return
+	}
 	logBase(DEBUG, fmt.Sprintf(msg, v...))
 }
 
 // Info logs info messages
 func Info(msg string, v ...interface{}) {
+	if cfg.level > INFO {
+		return
+	}
 	logBase(INFO, fmt.Sprintf(msg, v...))
 }
 
 // Warn logs warn messages
 func Warn(msg string, v ...interface{}) {
+	if cfg.level > WARN {
+		return
+	}
 	logBase(WARN, fmt.Sprintf(msg, v...))
 }
 
 // Error logs error messages
 func Error(msg string, v ...interface{}) {
+	if cfg.level > ERROR {
+		return
+	}
 	logBase(ERROR, fmt.Sprintf(msg, v...))
 }
 
