@@ -30,27 +30,19 @@ func TestGetCallerContext(t *testing.T) {
 }
 
 //--------------------------------------------------------------------------------------------------
-type testingBackend struct {
-	LogHistory []string
-}
-
-func (backend *testingBackend) log(s string) {
-	backend.LogHistory = append(backend.LogHistory, s)
-}
-
 func TestInfo(t *testing.T) {
-	backend := testingBackend{}
+	backend := testingLogWriter{}
 	SetBackend(&backend)
 
 	Info("Testmessage")
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[INFO]")
-	assert.Contains(t, message, "logging_test.go#45")
+	assert.Contains(t, message, "logging_test.go#37")
 }
 
 func TestDebug(t *testing.T) {
-	backend := testingBackend{}
+	backend := testingLogWriter{}
 	SetBackend(&backend)
 	SetLogLevel(DEBUG)
 
@@ -58,33 +50,33 @@ func TestDebug(t *testing.T) {
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[DEBUG]")
-	assert.Contains(t, message, "logging_test.go#57")
+	assert.Contains(t, message, "logging_test.go#49")
 }
 
 func TestWarn(t *testing.T) {
-	backend := testingBackend{}
+	backend := testingLogWriter{}
 	SetBackend(&backend)
 
 	Warn("Testmessage")
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[WARN]")
-	assert.Contains(t, message, "logging_test.go#68")
+	assert.Contains(t, message, "logging_test.go#60")
 }
 
 func TestError(t *testing.T) {
-	backend := testingBackend{}
+	backend := testingLogWriter{}
 	SetBackend(&backend)
 
 	Error("Testmessage")
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[ERROR]")
-	assert.Contains(t, message, "logging_test.go#79")
+	assert.Contains(t, message, "logging_test.go#71")
 }
 
 func TestFatal(t *testing.T) {
-	backend := testingBackend{}
+	backend := testingLogWriter{}
 	SetBackend(&backend)
 
 	oldOsExit := exit
@@ -102,6 +94,6 @@ func TestFatal(t *testing.T) {
 	message := backend.LogHistory[0]
 	assert.Contains(t, message, "Testmessage")
 	assert.Contains(t, message, "[FATAL]")
-	assert.Contains(t, message, "logging_test.go#101")
+	assert.Contains(t, message, "logging_test.go#93")
 	assert.Equal(t, expectedExitCode, got)
 }

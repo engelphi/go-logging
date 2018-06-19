@@ -14,7 +14,7 @@ var exit = os.Exit
 var cfg config
 
 func init() {
-	cfg.backend = ConsoleBackend{}
+	cfg.backend = ConsoleWriter{}
 	cfg.level = INFO
 }
 
@@ -43,7 +43,7 @@ func logBase(level LogLevel, msg string) {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
-	cfg.backend.log(formatLogString(t.Local().String(), level, caller, msg))
+	cfg.backend.write(formatLogString(t.Local().String(), level, caller, msg))
 }
 
 //--------------------------------------------------------------------------------------------------

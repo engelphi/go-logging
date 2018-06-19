@@ -1,12 +1,12 @@
 package logging
 
 type config struct {
-	backend Backend
+	backend LogWriter
 	level   LogLevel
 }
 
 // SetBackend Sets the backend that should be used by the logger
-func SetBackend(backend Backend) {
+func SetBackend(backend LogWriter) {
 	cfg.backend = backend
 }
 
